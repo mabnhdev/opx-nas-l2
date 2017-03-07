@@ -39,7 +39,12 @@
 #define NAS_MAC_LOG(type, msg, ...)\
                     EV_LOGGING( L2MAC,type, "", msg, ##__VA_ARGS__)
 
+#ifndef USING_CAVIUM_SAI
 #define SWITCH_DEFAULT_MAC_AGE_TIMEOUT 1800
+#else
+/* Cavium SAI only allows a maximum of 63 */
+#define SWITCH_DEFAULT_MAC_AGE_TIMEOUT 63
+#endif
 
 typedef enum del_filter_type_ {
     DEL_VLAN_FILTER,
