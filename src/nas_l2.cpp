@@ -19,6 +19,9 @@
  */
 
 
+#ifndef ORIGINAL_DELL_CODE
+#include <dlfcn.h>
+#endif
 #include "nas_l2_init.h"
 #include "nas_switch_mac.h"
 #include "nas_mirror_api.h"
@@ -54,6 +57,17 @@ t_std_error nas_l2_init(void) {
     size_t ix = 0;
     size_t mx = sizeof(nas_l2_init_functions)/sizeof(*nas_l2_init_functions);
     for ( ; ix < mx ; ++ix ) {
+#ifndef ORIGINAL_DELL_CODE
+        /*
+         * The Broadcom SAI doesn't implenment STG functions yet
+         * therefore if we are linked against the Broadcom SAI don't
+         * attempt to call nas_stg_init() because it will SEGV due to
+         * the SAI not having a a dispatch table for STG functions.
+         */
+        if ((nas_l2_init_functions[ix] = nas_stg_init) &&
+            (dlsym(RTLD_DEFAULT, "opennsl_driver_init") != NULL))
+            continue;
+#endif
         t_std_error rc = nas_l2_init_functions[ix](handle);
         if (rc!=STD_ERR_OK) return rc;
     }
