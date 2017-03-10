@@ -59,12 +59,12 @@ t_std_error nas_l2_init(void) {
     for ( ; ix < mx ; ++ix ) {
 #ifndef ORIGINAL_DELL_CODE
         /*
-         * The Broadcom SAI doesn't implenment STG functions yet
+         * The Broadcom SAI doesn't implement STG functions yet
          * therefore if we are linked against the Broadcom SAI don't
          * attempt to call nas_stg_init() because it will SEGV due to
          * the SAI not having a a dispatch table for STG functions.
          */
-        if ((nas_l2_init_functions[ix] = nas_stg_init) &&
+        if ((nas_l2_init_functions[ix] == nas_stg_init) &&
             (dlsym(RTLD_DEFAULT, "opennsl_driver_init") != NULL))
             continue;
 #endif
